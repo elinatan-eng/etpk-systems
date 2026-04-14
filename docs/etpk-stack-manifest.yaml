@@ -1,0 +1,89 @@
+# ETPK Stack Manifest v1
+# One file to rule them all — any AI/dev can read this and know your infra cold.
+
+stacks:
+  - name: GitHub
+    purpose: Code repos, issues, Actions, packages
+    api_keys_needed:
+      - GH_TOKEN (fine-grained PAT, scopes: repo, read:org)
+    notes: elinatan-eng owns everything; main org is elinatan-eng
+
+  - name: Zo Space
+    purpose: Personal hub (etpk.zo.space), mini-apps, linktree-style pages
+    api_keys_needed:
+      - ZO_API_KEY (for /zo/ask calls from zo.space routes)
+    notes: Currently 12 routes; free/paid plan; managed React + Hono
+
+  - name: Hugging Face Spaces
+    purpose: Quick public ML demos, CPU-only lightweight apps
+    api_keys_needed:
+      - HF_TOKEN
+    notes: Free tier CPU Spaces; good for static-ish AI demos
+
+  - name: Cloudflare Pages
+    purpose: Static frontends, documentation, GitHub-connected deploys
+    api_keys_needed:
+      - CF_API_TOKEN (Account level, Pages edit scope)
+      - CF_ACCOUNT_ID
+    notes: Currently used for zo.space mirror; connect to GitHub for auto-deploy
+
+  - name: Cloudflare Workers + Queues
+    purpose: Serverless APIs, cron jobs, background tasks, AI routing
+    api_keys_needed:
+      - CF_API_TOKEN (Workers AI scope)
+      - CF_ACCOUNT_ID
+    notes: Workers AI for LLM calls; Queues for heavy async jobs
+
+  - name: Supabase
+    purpose: Auth, Postgres DB, real-time DB, simple backend storage
+    api_keys_needed:
+      - SUPABASE_DB_URL
+      - SUPABASE_ANON_KEY
+      - SUPABASE_SERVICE_ROLE_KEY
+    notes: Pick one DB platform and standardise; Supabase chosen over Firebase
+
+  - name: OpenAI
+    purpose: Primary LLM API (backup: Cloudflare Workers AI)
+    api_keys_needed:
+      - OPENAI_API_KEY
+    notes: Use for complex completions; keep Workers AI as fast/cheap fallback
+
+  - name: Cloudflare Analytics + Logflare
+    purpose: Latency monitoring, error tracking, budget alerts for Workers AI
+    api_keys_needed:
+      - LOGFLARE_API_KEY
+      - LOGFLARE_SOURCE_TOKEN
+    notes: Lightweight; can also use Supabase tables for simple log storage
+
+  - name: Stripe
+    purpose: Payments, subscriptions, monetization when ready
+    api_keys_needed:
+      - STRIPE_SECRET_KEY
+      - STRIPE_WEBHOOK_SECRET (whsec_...)
+    notes: Connect from Workers/Zo Space; currently not yet active
+
+  - name: Cloudflare Access
+    purpose: Zero-Trust front door for all internal dashboards and admin UIs
+    api_keys_needed:
+      - CF_API_TOKEN (Access + Zero Trust scope)
+    notes: Protects private routes, internal tools; SSO + device posture checks
+
+# Central prompt + policy repo
+prompt_repo:
+  url: https://github.com/elinatan-eng/etpk-systems
+  purpose: Store all master prompts, policy docs, checklists, runbooks
+  structure:
+    - /prompts — master prompt specs (photo album, etc.)
+    - /policy — policy-guardrails.md
+    - /docs — checklists, runbooks, onboarding guides
+
+# Active repos
+repos:
+  - name: zo-space
+    url: https://github.com/elinatan-eng/zo-space
+    purpose: Zo Space hub + ecosystem routes mirror
+
+# API key storage
+# All secrets stored in: Zo Settings > Advanced > Secrets
+# NEVER hardcode here; reference env var names only
+secrets_store: "Zo Settings > Advanced > Secrets"
