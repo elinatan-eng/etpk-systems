@@ -1,53 +1,43 @@
-# Prompts — Contract & Style Guide
+# ETPK Systems — Prompts & Skills
+
+## Structure
+
+```
+prompts/       → master prompts (human-readable .md specs)
+skills/        → machine-readable tool manifests (JSON)
+policy/        → policy-guardrails.md
+docs/          → etpk-stack-manifest.yaml, run-log.md
+```
 
 ## How to consume a prompt file
 
 Every prompt in `/prompts/*.md` follows this contract:
 
-1. **Read the full file** before doing anything else.
-2. **Extract:** goal, tech stack, deliverables, and any output format requirements.
-3. **Execute** the task end-to-end (code, file tree, commands).
-4. **Report** using the same format the prompt specifies.
+- **Inputs**: described at top (file paths, parameters, constraints)
+- **Outputs**: described at top (generated code, file tree, commands)
+- **Style rules**: listed in the prompt itself (e.g. "use TypedDict", "no TODO comments")
+- **Risk level**: low / medium / high (from `index.json`)
 
-## Standard prompt structure
+## How to consume a skill manifest
 
-Every master prompt in this repo MUST contain these sections:
+Every skill in `/skills/<skill-id>/manifest.json` follows this contract:
 
-```
-# <Name>
+- **Entry**: how to invoke (e.g. `python zo_skill.py`)
+- **Modes**: discrete operations (e.g. `run-skill` vs `run-chat`)
+- **Inputs/Outputs**: typed per mode
+- **orchestrator_instructions**: when to prefer this skill over alternatives
 
-## Goal / UX
-## Tech Stack
-## Data Model   (TS interfaces where relevant)
-## Service Layer (abstraction boundaries)
-## Project Structure (file tree)
-## Deliverables
-  1. File/folder tree
-  2. Full code for all files
-  3. package.json + tsconfig.json
-  4. CLI run commands
-  5. Brief explanation of key mechanism
-```
+## Orchestrator rules
 
-## Style rules for AI consumption
+1. Read `prompts/index.json` to find the right prompt or skill by `id`
+2. Load the referenced file (prompt .md or skill manifest JSON)
+3. Execute the task — write files, run commands, call APIs
+4. Commit and push changes to the appropriate repo
+5. Append a timestamped entry to `docs/run-log.md`
 
-- No hidden assumptions — state every constraint explicitly
-- Tech stack specified as exact package names + versions where possible
-- TS interfaces for all data models; no `any`
-- Service layer always abstracted (swappable impl, not hard‑coded)
-- Deliverables listed as a numbered checklist — easy to verify
-- Always include: file tree, full code, package.json, run commands
+## Style rules for generated code
 
-## What this enables
-
-- **Zo Computer:** `etpk-systems/prompts/<name>.md` → paste into chat → get full output
-- **Perplexity Computer:** same — paste → get code + tree + commands
-- **Orchestrator (zo-space):** picks the right prompt by task + repo name, runs it, logs output
-- **JSON index:** future proof — allows programmatic prompt discovery
-
-## Adding a new prompt
-
-1. Save to `etpk-systems/prompts/<descriptive-name>.md`
-2. Follow the structure above exactly
-3. Add entry to `prompts/index.json`
-4. Commit and push
+- Prefer `TypedDict` over raw dicts for typed contracts
+- No TODO or placeholder comments in final output
+- Include exact CLI commands for running the output
+- Add `// ... existing code ...` markers when editing existing files
