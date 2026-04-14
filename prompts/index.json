@@ -5,61 +5,22 @@
     "tools": ["github", "editor"],
     "risk": "medium",
     "path": "prompts/photo-album-ios-style.md",
-    "playbook": "Use this when you want a fresh React Native iOS-Photos-style album app with strict TypeScript, zoomable grid, and local-first storage."
+    "playbook": "Use when you need a fresh React Native iOS-Photos-style album app."
   },
   {
     "id": "zo-skill",
-    "name": "Zo Skill Runner",
-    "description": "Call zo_skill.py to run Zo Computer automations, skills, or chats.",
-    "tools": ["bash", "http"],
+    "description": "Call zo_skill.py to run Zo Computer automations, skills, or chats via HTTP",
+    "tools": ["shell", "http"],
     "risk": "low",
     "path": "skills/zo-skill/manifest.json",
-    "orchestrator_instructions": [
-      "Use run-skill when you know the exact Zo skill_id and have structured args.",
-      "Use run-chat for fuzzy, exploratory, or high-level instructions where Zo should decide which internal skill(s) to run.",
-      "Prefer a single concise call per user request; avoid looping or polling.",
-      "Never pass user secrets directly; instead refer to stored credentials or vault handles by id."
-    ],
-    "modes": [
-      {
-        "id": "run-skill",
-        "description": "Run a Zo skill by skill_id with optional JSON args.",
-        "inputs": {
-          "skill_id": {
-            "type": "string",
-            "required": true,
-            "description": "Zo skill identifier to execute (e.g. sys.github.create_repo)."
-          },
-          "args": {
-            "type": "object",
-            "required": false,
-            "description": "Arbitrary JSON payload passed to the Zo skill."
-          },
-          "timeout_seconds": {
-            "type": "number",
-            "required": false,
-            "description": "Override default timeout in seconds for long-running skills."
-          }
-        },
-        "outputs": {
-          "ok": { "type": "boolean", "description": "True if zo_skill.py finished without error." },
-          "result": { "type": "object", "description": "Raw JSON returned by the Zo skill (success payload)." },
-          "error": { "type": "string", "description": "Error message if ok is false." }
-        }
-      },
-      {
-        "id": "run-chat",
-        "description": "Send a chat-style request to Zo and return the response.",
-        "inputs": {
-          "prompt": { "type": "string", "required": true, "description": "Natural-language instruction for Zo." },
-          "context": { "type": "object", "required": false, "description": "Lightweight context (ids, references) to pass through." }
-        },
-        "outputs": {
-          "ok": { "type": "boolean", "description": "True if Zo returned a valid chat response." },
-          "message": { "type": "string", "description": "Primary text response from Zo." },
-          "data": { "type": "object", "description": "Any structured data Zo returned alongside the message." }
-        }
-      }
-    ]
+    "playbook": "Use for running Zo automations, skill wrappers, or chat completions."
+  },
+  {
+    "id": "quan-mode",
+    "description": "Expert researcher + engineer master prompt: restate problem, 5 solution directions, expert debate, final design, brutal reality check, 1-week and 1-month roadmaps",
+    "tools": ["web", "reasoning"],
+    "risk": "low",
+    "path": "prompts/quan-mode-master.md",
+    "playbook": "Use for any serious build or research task. Paste topic at bottom, run full deep-dive."
   }
 ]
