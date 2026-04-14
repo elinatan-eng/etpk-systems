@@ -2,9 +2,9 @@
   {
     "id": "photo-album-ios-style",
     "description": "iOS-Photos-style React Native photo album with pinch-to-zoom grid, typed TS, local-first storage",
-    "primary_tools": ["React Native", "TypeScript strict", "Redux Toolkit", "react-native-gesture-handler", "react-native-reanimated"],
-    "risk_level": "low",
+    "primary_tools": ["React Native CLI", "TypeScript strict", "react-native-gesture-handler", "react-native-reanimated", "react-native-fs"],
+    "risk": "medium",
     "path": "prompts/photo-album-ios-style.md",
-    "tech_stack": ["React Native", "TypeScript", "Redux", "Reanimated"]
+    "playbook": "Use this when you want a fresh React Native iOS-Photos-style album app with strict TypeScript, zoomable grid, and local-first storage scaffolded end-to-end."
   }
 ]
