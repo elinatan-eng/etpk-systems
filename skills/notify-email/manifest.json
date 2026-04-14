@@ -1,0 +1,52 @@
+{
+  "id": "notify-email",
+  "name": "Email Notifier",
+  "description": "Send structured notifications about ETPK/Zo events to all configured emails (luvyoukid@proton.me, huatdeck@gmail.com, elinatan@gmail.com, jimishun@proton.me).",
+  "entry": "python notify_email_entry.py",
+  "env": [
+    "SMTP_HOST",
+    "SMTP_PORT",
+    "SMTP_USER",
+    "SMTP_PASS",
+    "NOTIFY_EMAILS",
+    "NOTIFY_FROM"
+  ],
+  "modes": [
+    {
+      "id": "send",
+      "description": "Send a notification email to all configured recipients.",
+      "inputs": {
+        "event_type": { "type": "string", "required": true },
+        "summary":    { "type": "string", "required": true },
+        "severity":   { "type": "string", "required": true, "enum": ["info", "warning", "error", "success"] },
+        "details":    { "type": "object", "required": false }
+      },
+      "outputs": {
+        "ok":    { "type": "boolean", "description": "True if email sent." },
+        "error": { "type": "string",  "description": "Error message if failed." }
+      }
+    },
+    {
+      "id": "heartbeat",
+      "description": "Hourly heartbeat — always sends 'system alive' regardless of events.",
+      "inputs": {},
+      "outputs": { "ok": { "type": "boolean" } }
+    },
+    {
+      "id": "digest",
+      "description": "Hourly digest — reads run-log.md, summarizes last hour, sends if events exist.",
+      "inputs": {},
+      "outputs": { "ok": { "type": "boolean" }, "event_count": { "type": "integer" } }
+    }
+  ],
+  "event_types": [
+    { "id": "repo_change",       "severity": "warning", "description": "New repo created or force-pushed" },
+    { "id": "skill_change",      "severity": "info",    "description": "Skill manifests or prompts changed" },
+    { "id": "job_complete",       "severity": "info",    "description": "Long-running automations finished" },
+    { "id": "job_failed",        "severity": "error",   "description": "Batch jobs, pipelines failed" },
+    { "id": "policy_block",      "severity": "error",   "description": "Runs blocked by safety/guardrail rules" },
+    { "id": "skill_error",       "severity": "error",   "description": "HTTP skill 500s, timeouts, missing files" },
+    { "id": "hourly_heartbeat",   "severity": "info",    "description": "System alive ping (no event required)" },
+    { "id": "hourly_digest",      "severity": "info",    "description": "Summary of last hour's events from run-log" }
+  ]
+}

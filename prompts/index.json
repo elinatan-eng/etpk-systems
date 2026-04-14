@@ -5,22 +5,30 @@
     "tools": ["github", "editor"],
     "risk": "medium",
     "path": "prompts/photo-album-ios-style.md",
-    "playbook": "Use when you need a fresh React Native iOS-Photos-style album app."
+    "playbook": "Use when you want a fresh React Native iOS-Photos-style album app with strict TypeScript, zoomable grid, and local-first storage."
   },
   {
     "id": "zo-skill",
     "description": "Call zo_skill.py to run Zo Computer automations, skills, or chats via HTTP",
-    "tools": ["shell", "http"],
-    "risk": "low",
+    "tools": ["http", "github"],
+    "risk": "medium",
     "path": "skills/zo-skill/manifest.json",
-    "playbook": "Use for running Zo automations, skill wrappers, or chat completions."
+    "playbook": "Use for any task that needs Zo to execute a skill, automation, or chat. Check deny patterns before calling run-skill or run-chat."
   },
   {
     "id": "quan-mode",
-    "description": "Expert researcher + engineer master prompt: restate problem, 5 solution directions, expert debate, final design, brutal reality check, 1-week and 1-month roadmaps",
-    "tools": ["web", "reasoning"],
+    "description": "Expert research + engineering master prompt: deep analysis, multi-expert debate, full architecture, 1-week/1-month roadmap",
+    "tools": ["web", "github", "editor"],
     "risk": "low",
     "path": "prompts/quan-mode-master.md",
-    "playbook": "Use for any serious build or research task. Paste topic at bottom, run full deep-dive."
+    "playbook": "Use for any serious build or research task. Paste the topic at the bottom. Always: research → options → debate → final design."
+  },
+  {
+    "id": "notify-email",
+    "description": "Send structured ETPK/Zo event notifications to all 4 configured emails (hourly heartbeat, digest, or ad-hoc events)",
+    "tools": ["shell"],
+    "risk": "low",
+    "path": "skills/notify-email/manifest.json",
+    "playbook": "Call after any ETPK event (repo change, job complete/fail, policy block, skill error). Also called automatically every hour via cron."
   }
 ]

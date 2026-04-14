@@ -1,0 +1,3 @@
+# notify-email skill dependencies
+# (stdlib only — smtplib, email, json, datetime are built-in)
+# Install nothing for this skill — it runs on the Zo host with Python 3.
