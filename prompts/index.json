@@ -1,0 +1,10 @@
+[
+  {
+    "id": "photo-album-ios-style",
+    "description": "iOS-Photos-style React Native photo album with pinch-to-zoom grid, typed TS, local-first storage",
+    "primary_tools": ["React Native", "TypeScript strict", "Redux Toolkit", "react-native-gesture-handler", "react-native-reanimated"],
+    "risk_level": "low",
+    "path": "prompts/photo-album-ios-style.md",
+    "tech_stack": ["React Native", "TypeScript", "Redux", "Reanimated"]
+  }
+]
