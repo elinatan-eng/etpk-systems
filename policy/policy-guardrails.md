@@ -38,6 +38,37 @@
 - Design schemas with per‑user / per‑org isolation (multi‑tenant ready) if you onboard others later.
 - Document one "high‑risk" action at a time with a yes/no checklist that must pass before allowing full automation (e.g. "star spike email only" or "GitHub issue suggestions").
 
+## 7. Orchestrator Deny Patterns
+
+Before calling any skill via `zo-skill/run-skill` or `zo-skill/run-chat`, the orchestrator MUST check the input against this blocklist. Matching patterns must block execution and flag for human review.
+
+| Pattern (regex, case-insensitive) | Block message | Auto-escalate? |
+|---|---|---|
+| `delete.*repo` | Repo deletions are blocked. | Yes — stop + alert |
+| `drop.*table\|truncate` | Database drop/truncate operations are blocked. | Yes — stop + alert |
+| `rm -rf` | Recursive force delete is blocked. | Yes — stop + alert |
+| `payment.*send.*crypto` | Direct crypto send is blocked — use approved payment workflows only. | Yes — stop + alert |
+| `stripe.*refund.*force` | Forced refunds require human approval. | Yes — stop + alert |
+| `shutdown\|kill.*service` | Service shutdown requires explicit human approval. | Yes — stop + alert |
+| `eval\|exec.*\(.*\)` | Arbitrary code execution is blocked. | Yes — stop + alert |
+
+**Override process:** Only you (founder) can bypass a deny pattern, and only by adding `--force` flag in the orchestrator call and logging the override reason in `docs/run-log.md`.
+
+---
+
+## 8. PII Handling Rules
+
+- **Redact or mask before AI call:** full NRIC, passport, credit card, bank account, exact home address.
+- **Allowed unredacted:** public data, anonymized metrics, non-identifying business data.
+- **Logs:** minimize PII in logs; never store raw IDs in prompt logs.
+
+---
+
+## 9. Cost Controls
+
+- **Workers AI budget:** set alerts at 50%, 80%, 100% of monthly cap.
+- **Orchestrator:** block `zo-skill/run-skill` calls if daily call count exceeds 200 without review.
+
 ---
 
 **Next high‑risk action checklist** (complete before full automation):

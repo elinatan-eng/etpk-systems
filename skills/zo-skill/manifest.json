@@ -1,65 +1,63 @@
-[
-  {
-    "id": "photo-album-ios-style",
-    "description": "iOS-Photos-style React Native photo album with pinch-to-zoom grid, typed TS, local-first storage",
-    "tools": ["github", "editor"],
-    "risk": "medium",
-    "path": "prompts/photo-album-ios-style.md",
-    "playbook": "Use this when you want a fresh React Native iOS-Photos-style album app with strict TypeScript, zoomable grid, and local-first storage."
-  },
-  {
-    "id": "zo-skill",
-    "name": "Zo Skill Runner",
-    "description": "Call zo_skill.py to run Zo Computer automations, skills, or chats.",
-    "tools": ["bash", "http"],
-    "risk": "low",
-    "path": "skills/zo-skill/manifest.json",
-    "orchestrator_instructions": [
-      "Use run-skill when you know the exact Zo skill_id and have structured args.",
-      "Use run-chat for fuzzy, exploratory, or high-level instructions where Zo should decide which internal skill(s) to run.",
-      "Prefer a single concise call per user request; avoid looping or polling.",
-      "Never pass user secrets directly; instead refer to stored credentials or vault handles by id."
-    ],
-    "modes": [
-      {
-        "id": "run-skill",
-        "description": "Run a Zo skill by skill_id with optional JSON args.",
-        "inputs": {
-          "skill_id": {
-            "type": "string",
-            "required": true,
-            "description": "Zo skill identifier to execute (e.g. sys.github.create_repo)."
-          },
-          "args": {
-            "type": "object",
-            "required": false,
-            "description": "Arbitrary JSON payload passed to the Zo skill."
-          },
-          "timeout_seconds": {
-            "type": "number",
-            "required": false,
-            "description": "Override default timeout in seconds for long-running skills."
-          }
+{
+  "id": "zo-skill",
+  "name": "Zo Skill Runner",
+  "description": "Call zo_skill.py to run Zo Computer automations, skills, or chats.",
+  "entry": "python zo_skill.py",
+  "modes": [
+    {
+      "id": "run-skill",
+      "description": "Structured skill invocation by skill_id + JSON args.",
+      "inputs": {
+        "skill_id": {
+          "type": "string",
+          "required": true,
+          "examples": ["receipts", "trading", "prospecting"],
+          "pattern": "^[a-z0-9_-]+$"
         },
-        "outputs": {
-          "ok": { "type": "boolean", "description": "True if zo_skill.py finished without error." },
-          "result": { "type": "object", "description": "Raw JSON returned by the Zo skill (success payload)." },
-          "error": { "type": "string", "description": "Error message if ok is false." }
+        "args": {
+          "type": "object",
+          "required": false,
+          "default": {}
         }
       },
-      {
-        "id": "run-chat",
-        "description": "Send a chat-style request to Zo and return the response.",
-        "inputs": {
-          "prompt": { "type": "string", "required": true, "description": "Natural-language instruction for Zo." },
-          "context": { "type": "object", "required": false, "description": "Lightweight context (ids, references) to pass through." }
+      "iam_scope": "skill:run",
+      "risk_level": "medium",
+      "deny_patterns": ["delete", "destroy", "drop", "rm -rf", "truncate", "shutdown"]
+    },
+    {
+      "id": "run-chat",
+      "description": "Send a chat-style request to Zo and return the response.",
+      "inputs": {
+        "message": {
+          "type": "string",
+          "required": true,
+          "max_length": 4000
         },
-        "outputs": {
-          "ok": { "type": "boolean", "description": "True if Zo returned a valid chat response." },
-          "message": { "type": "string", "description": "Primary text response from Zo." },
-          "data": { "type": "object", "description": "Any structured data Zo returned alongside the message." }
+        "model": {
+          "type": "string",
+          "required": false,
+          "default": "vercel:minimax/minimax-m2.7"
+        },
+        "persona_id": {
+          "type": "string",
+          "required": false
         }
-      }
-    ]
-  }
-]
+      },
+      "iam_scope": "chat:send",
+      "risk_level": "low",
+      "deny_patterns": []
+    }
+  ],
+  "deny_patterns": [
+    { "pattern": "delete.*repo", "message": "Repo deletions are blocked." },
+    { "pattern": "drop.*table", "message": "Database drop operations are blocked." },
+    { "pattern": "rm -rf", "message": "Recursive force delete is blocked." },
+    { "pattern": "payment.*send.*crypto", "message": "Direct crypto send is blocked — use approved payment workflows only." },
+    { "pattern": "stripe.*refund.*force", "message": "Forced refunds require human approval." },
+    { "pattern": "shutdown", "message": "Service shutdown requires explicit human ok." },
+    { "pattern": "eval|exec.*\\(.*\\)", "message": "Arbitrary code execution is blocked." }
+  ],
+  "iam_scope": "skill:invoke",
+  "risk_level": "medium",
+  "version": "1.0"
+}
